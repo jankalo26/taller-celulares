@@ -1,12 +1,19 @@
 import { Component, signal } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 
 @Component({
-  imports: [RouterOutlet],
   selector: 'app-root',
-  styleUrl: './app.css',
+  imports: [RouterOutlet, RouterLink, RouterLinkActive],
   templateUrl: './app.html',
 })
 export class App {
-  protected readonly title = signal('taller-celulares');
+  menuAbierto = signal(false);
+
+  alternarMenu() {
+    this.menuAbierto.update((v) => !v);
+  }
+
+  cerrarMenu() {
+    this.menuAbierto.set(false);
+  }
 }
