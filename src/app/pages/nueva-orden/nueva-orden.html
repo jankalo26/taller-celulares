@@ -1,2 +1,99 @@
-<h2 class="h4">Nueva orden</h2>
-<p class="text-muted">Registro de una orden de reparación.</p>
+<h2 class="h4 mb-3">Nueva orden</h2>
+
+@if (ordenCreada() !== null) {
+  <div class="alert alert-success">
+    Orden #{{ ordenCreada() }} registrada correctamente.
+    <a routerLink="/ordenes" class="alert-link">Ver historial</a>
+  </div>
+}
+
+@if (mensajeError()) {
+  <div class="alert alert-danger">{{ mensajeError() }}</div>
+}
+
+<form [formGroup]="form" (ngSubmit)="guardar()" novalidate class="card card-body shadow-sm">
+  <div class="row g-3">
+    <div class="col-12 col-md-6">
+      <label class="form-label" for="cliente">Cliente</label>
+      <input id="cliente" type="text" class="form-control" formControlName="cliente"
+             [class.is-invalid]="invalido('cliente')" />
+      @if (invalido('cliente')) {
+        <div class="invalid-feedback">
+          @if (form.get('cliente')?.hasError('required')) {
+            El nombre del cliente es obligatorio.
+          } @else {
+            El nombre debe tener al menos 3 caracteres.
+          }
+        </div>
+      }
+    </div>
+
+    <div class="col-12 col-md-6">
+      <label class="form-label" for="telefono">Teléfono</label>
+      <input id="telefono" type="tel" class="form-control" formControlName="telefono"
+             maxlength="8" [class.is-invalid]="invalido('telefono')" />
+      @if (invalido('telefono')) {
+        <div class="invalid-feedback">
+          @if (form.get('telefono')?.hasError('required')) {
+            El teléfono es obligatorio.
+          } @else {
+            El teléfono debe tener exactamente 8 dígitos numéricos.
+          }
+        </div>
+      }
+    </div>
+
+    <div class="col-12 col-md-6">
+      <label class="form-label" for="marca">Marca</label>
+      <input id="marca" type="text" class="form-control" formControlName="marca"
+             [class.is-invalid]="invalido('marca')" />
+      @if (invalido('marca')) {
+        <div class="invalid-feedback">La marca es obligatoria.</div>
+      }
+    </div>
+
+    <div class="col-12 col-md-6">
+      <label class="form-label" for="modelo">Modelo</label>
+      <input id="modelo" type="text" class="form-control" formControlName="modelo"
+             [class.is-invalid]="invalido('modelo')" />
+      @if (invalido('modelo')) {
+        <div class="invalid-feedback">El modelo es obligatorio.</div>
+      }
+    </div>
+
+    <div class="col-12">
+      <label class="form-label" for="servicioId">Servicio</label>
+      <select id="servicioId" class="form-select" formControlName="servicioId"
+              [class.is-invalid]="invalido('servicioId')">
+        <option [ngValue]="null">Seleccione un servicio...</option>
+        @for (s of servicios(); track s.id) {
+          <option [ngValue]="s.id" [disabled]="s.repuestos === 0">
+            {{ s.nombre }} ({{ s.repuestos > 0 ? s.repuestos + ' repuestos' : 'sin repuestos' }})
+          </option>
+        }
+      </select>
+      @if (invalido('servicioId')) {
+        <div class="invalid-feedback">Debe seleccionar un servicio.</div>
+      }
+    </div>
+
+    <div class="col-12">
+      <label class="form-label" for="falla">Descripción de la falla</label>
+      <textarea id="falla" rows="3" class="form-control" formControlName="falla"
+                [class.is-invalid]="invalido('falla')"></textarea>
+      @if (invalido('falla')) {
+        <div class="invalid-feedback">
+          @if (form.get('falla')?.hasError('required')) {
+            Describa la falla del equipo.
+          } @else {
+            La descripción debe tener al menos 10 caracteres.
+          }
+        </div>
+      }
+    </div>
+
+    <div class="col-12 d-grid d-md-flex justify-content-md-end">
+      <button type="submit" class="btn btn-primary">Registrar orden</button>
+    </div>
+  </div>
+</form>
