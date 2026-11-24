@@ -1,2 +1,39 @@
-<h2 class="h4">Servicios</h2>
-<p class="text-muted">Catálogo de servicios de reparación.</p>
+<h2 class="h4 mb-3">Servicios</h2>
+
+<div class="row g-2 mb-4">
+  <div class="col-12 col-md-8">
+    <input
+      type="text"
+      class="form-control"
+      placeholder="Buscar servicio..."
+      [value]="texto()"
+      (input)="texto.set($any($event.target).value)"
+    />
+  </div>
+  <div class="col-12 col-md-4">
+    <select
+      class="form-select"
+      [value]="categoria()"
+      (change)="categoria.set($any($event.target).value)"
+    >
+      <option value="">Todas las categorías</option>
+      @for (c of categorias(); track c) {
+        <option [value]="c">{{ c }}</option>
+      }
+    </select>
+  </div>
+</div>
+
+@if (cargando()) {
+  <div class="text-muted">Cargando servicios...</div>
+} @else if (filtrados().length === 0) {
+  <div class="alert alert-warning">No se encontraron servicios con ese criterio.</div>
+} @else {
+  <div class="row g-3">
+    @for (s of filtrados(); track s.id) {
+      <div class="col-12 col-sm-6 col-lg-4">
+        <app-servicio-card [servicio]="s" (solicitar)="alSolicitar($event)" />
+      </div>
+    }
+  </div>
+}
