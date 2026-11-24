@@ -1,2 +1,55 @@
-<h2 class="h4">Detalle de la orden</h2>
-<p class="text-muted">Datos de la orden y acciones disponibles.</p>
+@if (cargando()) {
+  <div class="text-muted">Cargando orden...</div>
+} @else if (!orden()) {
+  <div class="alert alert-danger">
+    <p class="mb-2">La orden solicitada no existe.</p>
+    <a routerLink="/ordenes" class="btn btn-outline-danger btn-sm">Volver al historial</a>
+  </div>
+} @else {
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="h4 mb-0">Orden #{{ orden()!.id }}</h2>
+    <span class="badge fs-6" [ngClass]="claseEstado(orden()!.estado)">{{ orden()!.estado }}</span>
+  </div>
+
+  @if (mensaje()) {
+    <div class="alert alert-success">{{ mensaje() }}</div>
+  }
+  @if (mensajeError()) {
+    <div class="alert alert-danger">{{ mensajeError() }}</div>
+  }
+
+  <div class="card shadow-sm mb-3">
+    <div class="card-body">
+      <dl class="row mb-0">
+        <dt class="col-5 col-md-3">Fecha</dt>
+        <dd class="col-7 col-md-9">{{ orden()!.fecha | date: 'dd/MM/yyyy HH:mm' }}</dd>
+
+        <dt class="col-5 col-md-3">Cliente</dt>
+        <dd class="col-7 col-md-9">{{ orden()!.cliente }}</dd>
+
+        <dt class="col-5 col-md-3">Teléfono</dt>
+        <dd class="col-7 col-md-9">{{ orden()!.telefono }}</dd>
+
+        <dt class="col-5 col-md-3">Equipo</dt>
+        <dd class="col-7 col-md-9">{{ orden()!.marca }} {{ orden()!.modelo }}</dd>
+
+        <dt class="col-5 col-md-3">Servicio</dt>
+        <dd class="col-7 col-md-9">{{ orden()!.servicioNombre }}</dd>
+
+        <dt class="col-5 col-md-3">Precio</dt>
+        <dd class="col-7 col-md-9">{{ orden()!.precio | currency: 'BOB' : 'Bs. ' : '1.0-0' }}</dd>
+
+        <dt class="col-5 col-md-3">Falla</dt>
+        <dd class="col-7 col-md-9 mb-0">{{ orden()!.falla }}</dd>
+      </dl>
+    </div>
+  </div>
+
+  <div class="d-grid gap-2 d-md-flex">
+    @if (orden()!.estado === 'Pendiente') {
+      <button class="btn btn-success" (click)="entregar()">Entregar equipo</button>
+      <button class="btn btn-danger" (click)="cancelar()">Cancelar orden</button>
+    }
+    <a routerLink="/ordenes" class="btn btn-outline-secondary">Volver al historial</a>
+  </div>
+}
