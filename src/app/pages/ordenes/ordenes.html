@@ -1,2 +1,56 @@
-<h2 class="h4">Historial de órdenes</h2>
-<p class="text-muted">Órdenes registradas y su estado.</p>
+<h2 class="h4 mb-3">Historial de órdenes</h2>
+
+<div class="row g-2 mb-3">
+  <div class="col-12 col-md-4">
+    <select class="form-select" [value]="estado()" (change)="alCambiarEstado($any($event.target).value)">
+      <option value="">Todos los estados</option>
+      @for (e of estados; track e) {
+        <option [value]="e">{{ e }}</option>
+      }
+    </select>
+  </div>
+</div>
+
+@if (cargando()) {
+  <div class="text-muted">Cargando órdenes...</div>
+} @else if (ordenes().length === 0) {
+  <div class="alert alert-info">
+    Aún no hay órdenes registradas.
+    <a routerLink="/nueva-orden" class="alert-link">Registrar la primera</a>
+  </div>
+} @else if (filtradas().length === 0) {
+  <div class="alert alert-warning">No hay órdenes con ese estado.</div>
+} @else {
+  <div class="table-responsive">
+    <table class="table table-hover align-middle bg-white shadow-sm">
+      <thead class="table-light">
+        <tr>
+          <th>N°</th>
+          <th>Fecha</th>
+          <th>Cliente</th>
+          <th>Servicio</th>
+          <th>Total</th>
+          <th>Estado</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (o of filtradas(); track o.id) {
+          <tr>
+            <td>#{{ o.id }}</td>
+            <td>{{ o.fecha | date: 'dd/MM/yyyy HH:mm' }}</td>
+            <td>{{ o.cliente }}</td>
+            <td>{{ o.servicioNombre }}</td>
+            <td>{{ o.precio | currency: 'BOB' : 'Bs. ' : '1.0-0' }}</td>
+            <td>
+              <span class="badge" [ngClass]="claseEstado(o.estado)">{{ o.estado }}</span>
+            </td>
+            <td class="text-end">
+              <a class="btn btn-sm btn-outline-primary" [routerLink]="['/ordenes', o.id]">Ver detalle</a>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+}
